@@ -1,0 +1,8 @@
+--liquibase formatted sql
+
+--changeset session:1
+CREATE TABLE USERS (
+  ID BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  NAME VARCHAR(100) NOT NULL COMMENT 'user name',
+  PHONE VARCHAR(100) NOT NULL COMMENT 'user phone'
+);

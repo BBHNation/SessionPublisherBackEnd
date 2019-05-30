@@ -4,7 +4,9 @@ services:
     image: mysql:5.7
     environment:
       - "MYSQL_DATABASE=session"
-      - "MYSQL_ALLOW_EMPTY_PASSWORD=false"
-      - "MYSQL_ROOT_PASSWORD=password"
+      - "MYSQL_ALLOW_EMPTY_PASSWORD=true"
+      - "MYSQL_ROOT_PASSWORD=123"
     ports:
       - "3306:3306"
+    volumes:
+      - ../src/main/resources:/app

@@ -1,5 +1,6 @@
 package com.hancock.SessionPublisher.session;
 
+import com.hancock.SessionPublisher.intrastructure.utils.IdGenerator;
 import lombok.Getter;
 
 @Getter
@@ -12,6 +13,7 @@ public class SessionDomain {
     private boolean published;
 
     public SessionDomain(String title, String subTitle, int currentStage, int totalStage) {
+        this.id = IdGenerator.newId();
         this.title = title;
         this.subTitle = subTitle;
         this.currentStage = currentStage;

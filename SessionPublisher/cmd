@@ -8,8 +8,11 @@ case "$1" in
   "init")
     docker-compose -f config/docker-compose.yml down
     docker-compose -f config/docker-compose.yml up -d
-    sleep 8*1000
+    sleep 15*1000
     docker exec -it config_db_1 app/initDataBase.sh
+    ;;
+  "down")
+    docker-compose -f config/docker-compose.yml down
     ;;
   "docker")
     docker-compose -f config/docker-compose.yml down

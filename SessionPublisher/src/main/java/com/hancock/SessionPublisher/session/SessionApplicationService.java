@@ -15,13 +15,11 @@ public class SessionApplicationService {
     }
 
     public SessionDomain findSessionById(String sessionId) {
-//        return new SessionDomain("title", "subTitle", 1, 3).bindPublishStatus(true);
         return sessionRepository.findById(sessionId).mapToDomain();
     }
 
-    public String saveSession(SessionDomain domain) {
+    public void saveSession(SessionDomain domain) {
         sessionRepository.save(new SessionEntity(domain));
-        return "ok";
     }
 
 }

@@ -4,14 +4,17 @@ import com.hancock.SessionPublisher.session.SessionDomain;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-
-import lombok.Cleanup;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Setter
 @Getter
+@NoArgsConstructor
+@Table(name = "sessions")
 public class SessionEntity {
     @Id
     @Column(name = "id")

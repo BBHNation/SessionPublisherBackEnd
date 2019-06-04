@@ -18,9 +18,9 @@ public class SessionController {
         return applicationService.findSessionById(sessionId);
     }
 
-    @PostMapping(value = "/add")
-    public String createSession(@RequestBody SessionDomain domain) {
-        return applicationService.saveSession(domain);
+    @PutMapping(value = "")
+    public void createSession(@RequestBody SessionDomain domain) {
+        applicationService.saveSession(domain);
     }
 
 }

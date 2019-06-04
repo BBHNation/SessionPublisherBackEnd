@@ -1,12 +1,18 @@
 package com.hancock.SessionPublisher.session;
 
+import com.hancock.SessionPublisher.intrastructure.exceptions.HttpConflictException;
 import com.hancock.SessionPublisher.intrastructure.session.SessionEntity;
 import com.hancock.SessionPublisher.intrastructure.session.SessionRepository;
 import com.hancock.SessionPublisher.session.views.CreateSessionRequest;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+
+import java.net.HttpURLConnection;
+
 import java.util.List;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 @Service
 public class SessionApplicationService {
@@ -27,7 +33,15 @@ public class SessionApplicationService {
                 request.getSubTitle(),
                 request.getCurrentStage(),
                 request.getTotalStage());
-        sessionRepository.save(new SessionEntity(sessionDomain));
+        try {
+            sessionRepository.save(new SessionEntity(sessionDomain));
+        } catch (Exception e) {
+            if (e instanceof DataIntegrityViolationException) {
+                throw new HttpConflictException();
+            } else {
+                throw e;
+            }
+        }
     }
 
     public void sessionGotoNextStage(String sessionId) {

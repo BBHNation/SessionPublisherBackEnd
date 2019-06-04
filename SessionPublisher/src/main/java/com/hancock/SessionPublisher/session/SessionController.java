@@ -23,4 +23,9 @@ public class SessionController {
         applicationService.saveSession(domain);
     }
 
+    @PostMapping(value = "/{sessionId}/nextStage")
+    public void gotoNextStage(@PathVariable String sessionId) {
+        applicationService.sessionGotoNextStage(sessionId);
+    }
+
 }

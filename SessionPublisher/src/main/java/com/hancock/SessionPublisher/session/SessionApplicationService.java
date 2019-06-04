@@ -22,4 +22,9 @@ public class SessionApplicationService {
         sessionRepository.save(new SessionEntity(domain));
     }
 
+    public void sessionGotoNextStage(String sessionId) {
+        SessionEntity sessionEntity = sessionRepository.findById(sessionId);
+        sessionRepository.save(new SessionEntity(sessionEntity.mapToDomain().gotoNextStage()));
+    }
+
 }

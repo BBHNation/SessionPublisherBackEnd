@@ -30,14 +30,16 @@ public class SessionDomain {
         return this;
     }
 
-    public void publish() {
-        published = true;
+    public SessionDomain publish() {
+        this.published = true;
+        return this;
     }
 
-    public void gotoNextStage() {
+    public SessionDomain gotoNextStage() {
         if (currentStage < totalStage) {
             currentStage ++;
         }
+        return this;
     }
 
 }

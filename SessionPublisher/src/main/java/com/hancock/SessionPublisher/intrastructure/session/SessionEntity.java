@@ -35,6 +35,10 @@ public class SessionEntity {
     @Column(name = "published")
     private boolean published;
 
+    @Column(name = "creator_id")
+    private String creatorId;
+
+
     public SessionEntity(SessionDomain domain) {
         this.id = domain.getId();
         this.title = domain.getTitle();
@@ -42,10 +46,11 @@ public class SessionEntity {
         this.currentStage = domain.getCurrentStage();
         this.totalStage = domain.getTotalStage();
         this.published = domain.isPublished();
+        this.creatorId = domain.getCreatorId();
     }
 
     public SessionDomain mapToDomain() {
-        return new SessionDomain(this.title, this.subTitle, this.currentStage, this.totalStage)
+        return new SessionDomain(this.title, this.subTitle, this.currentStage, this.totalStage, this.creatorId)
             .bindId(this.id)
             .bindPublishStatus(this.isPublished());
     }

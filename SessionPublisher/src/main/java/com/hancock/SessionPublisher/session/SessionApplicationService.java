@@ -1,26 +1,31 @@
 package com.hancock.SessionPublisher.session;
 
-import com.hancock.SessionPublisher.intrastructure.exceptions.HttpConflictException;
+import com.hancock.SessionPublisher.intrastructure.exceptions.ExceptionCode;
+import com.hancock.SessionPublisher.intrastructure.exceptions.ExceptionSupplier;
+import com.hancock.SessionPublisher.intrastructure.exceptions.ConflictException;
+import com.hancock.SessionPublisher.intrastructure.exceptions.NotFoundException;
 import com.hancock.SessionPublisher.intrastructure.session.SessionEntity;
 import com.hancock.SessionPublisher.intrastructure.session.SessionRepository;
+import com.hancock.SessionPublisher.intrastructure.user.UserRepository;
 import com.hancock.SessionPublisher.session.views.CreateSessionRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-
-import java.net.HttpURLConnection;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class SessionApplicationService {
+
     private final SessionRepository sessionRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public SessionApplicationService(SessionRepository sessionRepository) {
+    public SessionApplicationService(SessionRepository sessionRepository,
+        UserRepository userRepository) {
         this.sessionRepository = sessionRepository;
+        this.userRepository = userRepository;
     }
 
     public SessionDomain findSessionById(String sessionId) {
@@ -28,16 +33,18 @@ public class SessionApplicationService {
     }
 
     public void createSession(CreateSessionRequest request) {
+        checkUserExist(request.getCreatorId());
         SessionDomain sessionDomain = new SessionDomain(
-                request.getTitle(),
-                request.getSubTitle(),
-                request.getCurrentStage(),
-                request.getTotalStage());
+            request.getTitle(),
+            request.getSubTitle(),
+            request.getCurrentStage(),
+            request.getTotalStage(),
+            request.getCreatorId());
         try {
             sessionRepository.save(new SessionEntity(sessionDomain));
         } catch (Exception e) {
             if (e instanceof DataIntegrityViolationException) {
-                throw new HttpConflictException();
+                throw new ConflictException(ExceptionCode.SESSION_DATA_CONFLICT);
             } else {
                 throw e;
             }
@@ -55,7 +62,12 @@ public class SessionApplicationService {
     }
 
     public List<SessionDomain> getSessionDomainList() {
-        return sessionRepository.findAll().stream().map(SessionEntity::mapToDomain).collect(Collectors.toList());
+        return sessionRepository.findAll().stream().map(SessionEntity::mapToDomain)
+            .collect(Collectors.toList());
     }
 
+    public void checkUserExist(String userId) throws NotFoundException {
+        userRepository.getUserEntityById(userId)
+            .orElseThrow(ExceptionSupplier.userNotFound());
+    }
 }

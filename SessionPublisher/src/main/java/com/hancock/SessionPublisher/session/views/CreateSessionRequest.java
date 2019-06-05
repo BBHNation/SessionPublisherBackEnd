@@ -19,4 +19,7 @@ public class CreateSessionRequest {
     private int currentStage;
 
     private int totalStage;
+
+    @NotBlank
+    private String creatorId;
 }

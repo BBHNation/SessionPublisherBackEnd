@@ -11,14 +11,16 @@ public class SessionDomain {
     private int currentStage;
     private int totalStage;
     private boolean published;
+    private String creatorId;
 
-    public SessionDomain(String title, String subTitle, int currentStage, int totalStage) {
+    public SessionDomain(String title, String subTitle, int currentStage, int totalStage, String creatorId) {
         this.id = IdGenerator.newId();
         this.title = title;
         this.subTitle = subTitle;
         this.currentStage = currentStage;
         this.totalStage = totalStage;
         this.published = false;
+        this.creatorId = creatorId;
     }
 
     public SessionDomain bindId(String id) {

@@ -1,5 +1,6 @@
 package com.hancock.SessionPublisher.session;
 
+import com.hancock.SessionPublisher.intrastructure.exceptions.NotFoundException;
 import com.hancock.SessionPublisher.session.views.CreateSessionRequest;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,8 @@ public class SessionController {
     }
 
     @PutMapping(value = "")
-    public void createSession(@RequestBody @Validated CreateSessionRequest request) {
+    public void createSession(@RequestBody @Validated CreateSessionRequest request)
+        throws NotFoundException {
         applicationService.createSession(request);
     }
 

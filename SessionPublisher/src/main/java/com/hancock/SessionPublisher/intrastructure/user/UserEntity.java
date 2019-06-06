@@ -28,8 +28,14 @@ public class UserEntity {
     @Column(name = "security_code")
     private String securityCode;
 
+    @Column(name = "online")
+    private boolean online;
+
+    @Column(name = "token")
+    private String token;
+
     public UserDomain mapToDomain() {
-        return new UserDomain(id, email, name, securityCode);
+        return new UserDomain(id, email, name, securityCode, online, token);
     }
 
     public UserEntity(UserDomain domain) {
@@ -37,5 +43,7 @@ public class UserEntity {
         this.email = domain.getEmail();
         this.name = domain.getName();
         this.securityCode = domain.getSecurityCode();
+        this.online = domain.isOnline();
+        this.token = domain.getToken();
     }
 }

@@ -1,7 +1,9 @@
 package com.hancock.SessionPublisher.user;
 
+import com.hancock.SessionPublisher.user.views.LoginRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,5 +22,10 @@ public class UserController {
     @PutMapping(value = "")
     public void registerUser(@RequestBody @Validated RegisterRequest request) {
         applicationService.registerUser(request);
+    }
+
+    @PostMapping(value = "/login")
+    public void loginUser(@RequestBody @Validated LoginRequest request) {
+        applicationService.login(request);
     }
 }

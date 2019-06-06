@@ -7,22 +7,39 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class UserDomain {
+
     private String id;
     private String email;
     private String securityCode;
     private String name;
+    private boolean online;
+    private String token;
 
     public UserDomain(String email, String name, String securityCode) {
         this.id = IdGenerator.newId();
         this.email = email;
         this.name = name;
         this.securityCode = securityCode;
+        this.online = false;
+        this.token = null;
     }
 
-    public UserDomain(String id, String email, String name, String identityCode) {
+    public UserDomain(String id, String email, String name, String securityCode, boolean online, String token) {
         this.id = id;
         this.email = email;
         this.name = name;
-        this.securityCode = identityCode;
+        this.securityCode = securityCode;
+        this.online = online;
+        this.token = token;
+    }
+
+    public UserDomain goOnLine() {
+        this.online = true;
+        return this;
+    }
+
+    public UserDomain goOffline() {
+        this.online = false;
+        return this;
     }
 }

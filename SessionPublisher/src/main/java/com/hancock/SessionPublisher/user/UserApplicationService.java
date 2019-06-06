@@ -4,6 +4,7 @@ import com.hancock.SessionPublisher.intrastructure.exceptions.ConflictException;
 import com.hancock.SessionPublisher.intrastructure.exceptions.ExceptionCode;
 import com.hancock.SessionPublisher.intrastructure.user.UserEntity;
 import com.hancock.SessionPublisher.intrastructure.user.UserRepository;
+import com.hancock.SessionPublisher.user.views.RegisterRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +17,9 @@ public class UserApplicationService {
         this.repository = repository;
     }
 
-    public void registerUser(UserDomain domain) {
+    public void registerUser(RegisterRequest request) {
         try {
+            UserDomain domain = new UserDomain(request.getEmail(), request.getName(), request.getSecurityCode());
             repository.save(new UserEntity(domain));
         } catch (Exception e) {
             if (e instanceof DataIntegrityViolationException) {

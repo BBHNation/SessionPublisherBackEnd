@@ -1,6 +1,7 @@
 package com.hancock.SessionPublisher.intrastructure.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -23,5 +24,13 @@ public class ApplicationExceptionHandler {
     public ApplicationError handleConflictException(ConflictException e) {
         return new ApplicationError(e.getCode(), "APPLICATION ERROR, RESOURCE CONFLICT");
     }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError handleArgumentNOtValid(MethodArgumentNotValidException e) {
+        return new ApplicationError(ExceptionCode.ARGUMENT_NOT_VALID, "APPLICATION ERROR, ARGUMENT NOT VALID");
+    }
+
 
 }

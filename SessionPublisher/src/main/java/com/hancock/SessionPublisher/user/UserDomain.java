@@ -12,11 +12,11 @@ public class UserDomain {
     private String securityCode;
     private String name;
 
-    public UserDomain(String email, String name, String identityCode) {
+    public UserDomain(String email, String name, String securityCode) {
         this.id = IdGenerator.newId();
         this.email = email;
         this.name = name;
-        this.securityCode = identityCode;
+        this.securityCode = securityCode;
     }
 
     public UserDomain(String id, String email, String name, String identityCode) {

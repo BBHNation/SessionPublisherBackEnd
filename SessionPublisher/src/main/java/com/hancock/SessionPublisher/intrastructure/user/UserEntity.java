@@ -31,11 +31,8 @@ public class UserEntity {
     @Column(name = "online")
     private boolean online;
 
-    @Column(name = "token")
-    private String token;
-
     public UserDomain mapToDomain() {
-        return new UserDomain(id, email, name, securityCode, online, token);
+        return new UserDomain(id, email, name, securityCode, online);
     }
 
     public UserEntity(UserDomain domain) {
@@ -44,6 +41,5 @@ public class UserEntity {
         this.name = domain.getName();
         this.securityCode = domain.getSecurityCode();
         this.online = domain.isOnline();
-        this.token = domain.getToken();
     }
 }

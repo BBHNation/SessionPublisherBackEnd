@@ -13,7 +13,6 @@ public class UserDomain {
     private String securityCode;
     private String name;
     private boolean online;
-    private String token;
 
     public UserDomain(String email, String name, String securityCode) {
         this.id = IdGenerator.newId();
@@ -21,16 +20,14 @@ public class UserDomain {
         this.name = name;
         this.securityCode = securityCode;
         this.online = false;
-        this.token = null;
     }
 
-    public UserDomain(String id, String email, String name, String securityCode, boolean online, String token) {
+    public UserDomain(String id, String email, String name, String securityCode, boolean online) {
         this.id = id;
         this.email = email;
         this.name = name;
         this.securityCode = securityCode;
         this.online = online;
-        this.token = token;
     }
 
     public UserDomain goOnLine() {

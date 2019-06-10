@@ -1,6 +1,7 @@
 package com.hancock.SessionPublisher.user;
 
 import com.hancock.SessionPublisher.user.views.LoginRequest;
+import com.hancock.SessionPublisher.user.views.LogoutRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,5 +35,10 @@ public class UserController {
         HttpHeaders headers = new HttpHeaders();
         headers.set("token", token);
         return new ResponseEntity<>(headers, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/logout")
+    public void logoutUser(@RequestBody @Validated LogoutRequest request, @RequestHeader("token") String token) {
+        applicationService.logout(request, token);
     }
 }

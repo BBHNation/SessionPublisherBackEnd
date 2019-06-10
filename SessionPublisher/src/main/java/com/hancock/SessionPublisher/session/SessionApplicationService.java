@@ -67,7 +67,7 @@ public class SessionApplicationService {
     }
 
     public void checkUserExist(String userId) throws NotFoundException {
-        userRepository.getUserEntityById(userId)
+        userRepository.findUserEntityById(userId)
             .orElseThrow(ExceptionSupplier.userNotFound());
     }
 }

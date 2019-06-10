@@ -5,6 +5,6 @@ import org.springframework.data.repository.Repository;
 
 public interface UserRepository extends Repository<UserEntity, String> {
     public void save(UserEntity entity);
-    public Optional<UserEntity> getUserEntityByEmail(String email);
-    public Optional<UserEntity> getUserEntityById(String userId);
+    public Optional<UserEntity> findUserEntityByEmail(String email);
+    public Optional<UserEntity> findUserEntityById(String userId);
 }

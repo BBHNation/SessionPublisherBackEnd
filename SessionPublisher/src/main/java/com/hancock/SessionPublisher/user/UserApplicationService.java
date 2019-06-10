@@ -9,9 +9,11 @@ import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenEntity;
 import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenRepository;
 import com.hancock.SessionPublisher.intrastructure.utils.TokenGenerator;
 import com.hancock.SessionPublisher.user.views.LoginRequest;
+import com.hancock.SessionPublisher.user.views.LogoutRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -45,7 +47,7 @@ public class UserApplicationService {
 
     public String login(LoginRequest request) {
         try {
-            UserEntity userEntity = userRepository.getUserEntityByEmail(request.getEmail())
+            UserEntity userEntity = userRepository.findUserEntityByEmail(request.getEmail())
                 .orElseThrow(ExceptionSupplier.userNotFound());
             UserDomain userDomain = userEntity.mapToDomain();
             if (userDomain.getSecurityCode().equals(request.getSecurityCode())) {
@@ -67,5 +69,19 @@ public class UserApplicationService {
             Timestamp.valueOf(LocalDateTime.now()));
         userTokenRepository.save(userTokenEntity);
         return newToken;
+    }
+
+    @Transactional
+    public void logout(LogoutRequest request, String token) {
+        UserEntity userEntityByEmail = userRepository
+            .findUserEntityByEmail(request.getEmail()).orElseThrow(ExceptionSupplier.userNotFound());
+        UserTokenEntity userTokenEntityByUserId = userTokenRepository
+            .findUserTokenEntityByUserId(userEntityByEmail.getId());
+        if (userTokenEntityByUserId.getContent().equals(token)) {
+            userRepository.save(new UserEntity(userEntityByEmail.mapToDomain().goOffline()));
+            userTokenRepository.deleteUserTokenEntityByContent(token);
+        } else {
+            throw ExceptionSupplier.tokenNotValied().get();
+        }
     }
 }

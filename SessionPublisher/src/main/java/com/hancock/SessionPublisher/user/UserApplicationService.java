@@ -5,26 +5,35 @@ import com.hancock.SessionPublisher.intrastructure.exceptions.ExceptionCode;
 import com.hancock.SessionPublisher.intrastructure.exceptions.ExceptionSupplier;
 import com.hancock.SessionPublisher.intrastructure.user.UserEntity;
 import com.hancock.SessionPublisher.intrastructure.user.UserRepository;
+import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenEntity;
+import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenRepository;
+import com.hancock.SessionPublisher.intrastructure.utils.TokenGenerator;
 import com.hancock.SessionPublisher.user.views.LoginRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 public class UserApplicationService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
+    private final UserTokenRepository userTokenRepository;
 
     public UserApplicationService(
-        UserRepository repository) {
-        this.repository = repository;
+        UserRepository repository,
+        UserTokenRepository userTokenRepository) {
+        this.userRepository = repository;
+        this.userTokenRepository = userTokenRepository;
     }
 
     public void registerUser(RegisterRequest request) {
         try {
             UserDomain domain = new UserDomain(request.getEmail(), request.getName(), request.getSecurityCode());
-            repository.save(new UserEntity(domain));
+            userRepository.save(new UserEntity(domain));
         } catch (Exception e) {
             if (e instanceof DataIntegrityViolationException) {
                 throw new ConflictException(ExceptionCode.USER_DATA_CONFLICT);
@@ -34,13 +43,13 @@ public class UserApplicationService {
         }
     }
 
-    public void login(LoginRequest request) {
+    public String login(LoginRequest request) {
         try {
-            UserEntity userEntity = repository.getUserEntityByEmail(request.getEmail())
+            UserEntity userEntity = userRepository.getUserEntityByEmail(request.getEmail())
                 .orElseThrow(ExceptionSupplier.userNotFound());
             UserDomain userDomain = userEntity.mapToDomain();
             if (userDomain.getSecurityCode().equals(request.getSecurityCode())) {
-                repository.save(new UserEntity(userDomain.goOnLine()));
+                return updateLoginStateAndGeneratorToken(userDomain);
             } else {
                 throw new ConflictException(ExceptionCode.SECURITY_CODE_WRONG);
             }
@@ -50,4 +59,13 @@ public class UserApplicationService {
         }
     }
 
+    @Transactional
+    String updateLoginStateAndGeneratorToken(UserDomain userDomain) {
+        userRepository.save(new UserEntity(userDomain.goOnLine()));
+        String newToken = TokenGenerator.newUserToken(userDomain.getId());
+        UserTokenEntity userTokenEntity = new UserTokenEntity(userDomain.getId(), newToken,
+            Timestamp.valueOf(LocalDateTime.now()));
+        userTokenRepository.save(userTokenEntity);
+        return newToken;
+    }
 }

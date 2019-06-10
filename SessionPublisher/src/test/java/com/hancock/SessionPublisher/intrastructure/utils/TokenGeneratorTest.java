@@ -6,7 +6,7 @@ import org.junit.Test;
 public class TokenGeneratorTest {
 
     @Test
-    public void tokenShouldNotBeNull_whenGeneratNewToken_givenUserIdAndTime() {
+    public void tokenShouldNotBeNull_whenGenerateNewToken_givenUserIdAndTime() {
         //given
         String token = TokenGenerator
             .newUserToken("userId");

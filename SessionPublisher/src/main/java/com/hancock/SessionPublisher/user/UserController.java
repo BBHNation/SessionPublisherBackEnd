@@ -2,6 +2,9 @@ package com.hancock.SessionPublisher.user;
 
 import com.hancock.SessionPublisher.user.views.LoginRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -25,7 +28,10 @@ public class UserController {
     }
 
     @PostMapping(value = "/login")
-    public void loginUser(@RequestBody @Validated LoginRequest request) {
-        applicationService.login(request);
+    public ResponseEntity<Void> loginUser(@RequestBody @Validated LoginRequest request) {
+        String token = applicationService.login(request);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("token", token);
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 }

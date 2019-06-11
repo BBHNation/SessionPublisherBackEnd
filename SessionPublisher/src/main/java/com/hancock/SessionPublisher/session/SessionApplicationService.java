@@ -29,7 +29,9 @@ public class SessionApplicationService {
     }
 
     public SessionDomain findSessionById(String sessionId) {
-        return sessionRepository.findById(sessionId).mapToDomain();
+        return sessionRepository.findById(sessionId)
+            .orElseThrow(ExceptionSupplier.sessionNotFound())
+            .mapToDomain();
     }
 
     public void createSession(CreateSessionRequest request) {
@@ -52,12 +54,12 @@ public class SessionApplicationService {
     }
 
     public void sessionGotoNextStage(String sessionId) {
-        SessionEntity sessionEntity = sessionRepository.findById(sessionId);
+        SessionEntity sessionEntity = sessionRepository.findById(sessionId).orElseThrow(ExceptionSupplier.sessionNotFound());
         sessionRepository.save(new SessionEntity(sessionEntity.mapToDomain().gotoNextStage()));
     }
 
     public void publishSession(String sessionId) {
-        SessionEntity sessionEntity = sessionRepository.findById(sessionId);
+        SessionEntity sessionEntity = sessionRepository.findById(sessionId).orElseThrow(ExceptionSupplier.sessionNotFound());
         sessionRepository.save(new SessionEntity(sessionEntity.mapToDomain().publish()));
     }
 

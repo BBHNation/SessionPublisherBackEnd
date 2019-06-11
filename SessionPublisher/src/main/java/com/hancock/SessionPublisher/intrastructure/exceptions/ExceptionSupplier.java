@@ -7,7 +7,12 @@ public class ExceptionSupplier {
         return ()->new NotFoundException(ExceptionCode.USER_NOT_FOUND);
     }
 
-    public static Supplier<ConflictException> tokenNotValied() {
+    public static Supplier<ConflictException> tokenNotValid() {
         return ()->new ConflictException(ExceptionCode.TOKEN_NOT_VALID);
     }
+
+    public static Supplier<NotFoundException> sessionNotFound() {
+        return ()->new NotFoundException(ExceptionCode.SESSION_NOT_FOUND);
+    }
+
 }

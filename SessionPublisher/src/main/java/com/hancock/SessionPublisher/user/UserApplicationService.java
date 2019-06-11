@@ -8,12 +8,12 @@ import com.hancock.SessionPublisher.intrastructure.user.UserRepository;
 import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenEntity;
 import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenRepository;
 import com.hancock.SessionPublisher.intrastructure.utils.TokenGenerator;
+import com.hancock.SessionPublisher.intrastructure.utils.UserTokenChecker;
 import com.hancock.SessionPublisher.user.views.LoginRequest;
 import com.hancock.SessionPublisher.user.views.LogoutRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -22,12 +22,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Slf4j
 public class UserApplicationService {
+    private final UserTokenChecker userTokenChecker;
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
 
     public UserApplicationService(
+        UserTokenChecker userTokenChecker,
         UserRepository repository,
         UserTokenRepository userTokenRepository) {
+        this.userTokenChecker = userTokenChecker;
         this.userRepository = repository;
         this.userTokenRepository = userTokenRepository;
     }
@@ -73,15 +76,11 @@ public class UserApplicationService {
 
     @Transactional
     public void logout(LogoutRequest request, String token) {
+        userTokenChecker.checkUserTokenValid(request.getEmail(), token);
+
         UserEntity userEntityByEmail = userRepository
             .findUserEntityByEmail(request.getEmail()).orElseThrow(ExceptionSupplier.userNotFound());
-        UserTokenEntity userTokenEntityByUserId = userTokenRepository
-            .findUserTokenEntityByUserId(userEntityByEmail.getId());
-        if (userTokenEntityByUserId.getContent().equals(token)) {
-            userRepository.save(new UserEntity(userEntityByEmail.mapToDomain().goOffline()));
-            userTokenRepository.deleteUserTokenEntityByContent(token);
-        } else {
-            throw ExceptionSupplier.tokenNotValied().get();
-        }
+        userRepository.save(new UserEntity(userEntityByEmail.mapToDomain().goOffline()));
+        userTokenRepository.deleteUserTokenEntityByContent(token);
     }
 }

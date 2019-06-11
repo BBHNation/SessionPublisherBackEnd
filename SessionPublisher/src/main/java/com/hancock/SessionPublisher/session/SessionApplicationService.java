@@ -34,14 +34,14 @@ public class SessionApplicationService {
             .mapToDomain();
     }
 
-    public void createSession(CreateSessionRequest request) {
-        checkUserExist(request.getCreatorId());
+    public void createSession(CreateSessionRequest request, String email) {
+        String creatorId = findUserWithEmail(email);
         SessionDomain sessionDomain = new SessionDomain(
             request.getTitle(),
             request.getSubTitle(),
             request.getCurrentStage(),
             request.getTotalStage(),
-            request.getCreatorId());
+            creatorId);
         try {
             sessionRepository.save(new SessionEntity(sessionDomain));
         } catch (Exception e) {
@@ -68,8 +68,8 @@ public class SessionApplicationService {
             .collect(Collectors.toList());
     }
 
-    public void checkUserExist(String userId) throws NotFoundException {
-        userRepository.findUserEntityById(userId)
-            .orElseThrow(ExceptionSupplier.userNotFound());
+    public String findUserWithEmail(String email) throws NotFoundException {
+        return userRepository.findUserEntityByEmail(email)
+            .orElseThrow(ExceptionSupplier.userNotFound()).getId();
     }
 }

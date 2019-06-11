@@ -1,7 +1,9 @@
 package com.hancock.SessionPublisher.intrastructure.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,9 +30,23 @@ public class ApplicationExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ApplicationError handleArgumentNOtValid(MethodArgumentNotValidException e) {
+    public ApplicationError handleArgumentNotValid(MethodArgumentNotValidException e) {
         return new ApplicationError(ExceptionCode.ARGUMENT_NOT_VALID, "APPLICATION ERROR, ARGUMENT NOT VALID");
     }
 
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError handleNotReadable(HttpMessageNotReadableException e) {
+        return new ApplicationError(ExceptionCode.Http_Message_Not_Readable, "REQUEST ERROR, REQUEST NOT READABLE");
+    }
+
+    @ExceptionHandler(MissingRequestHeaderException.class)
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ApplicationError handleNotReadable(MissingRequestHeaderException e) {
+        return new ApplicationError(ExceptionCode.HTTP_HEADER_NOT_COMPLETE, "REQUEST ERROR, REQUEST HEADER NOT COMPLETE");
+    }
 
 }

@@ -1,12 +1,18 @@
 package com.hancock.SessionPublisher.session;
 
-import com.hancock.SessionPublisher.intrastructure.exceptions.NotFoundException;
 import com.hancock.SessionPublisher.intrastructure.utils.UserTokenChecker;
 import com.hancock.SessionPublisher.session.views.CreateSessionRequest;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/sessions")
@@ -36,7 +42,7 @@ public class SessionController {
     @PutMapping(value = "")
     public void createSession(@RequestBody @Validated CreateSessionRequest request, @RequestHeader("token") String token, @RequestHeader("email") String email) {
         userTokenChecker.checkUserTokenValid(email, token);
-        applicationService.createSession(request);
+        applicationService.createSession(request, email);
     }
 
     @PostMapping(value = "/{sessionId}/nextStage")

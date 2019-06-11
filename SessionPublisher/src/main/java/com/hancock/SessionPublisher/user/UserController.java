@@ -42,8 +42,8 @@ public class UserController {
     }
 
     @PostMapping(value = "/logout")
-    public void logoutUser(@RequestBody @Validated LogoutRequest request, @RequestHeader("token") String token) {
-        userTokenChecker.checkUserTokenValid(request.getEmail(), token);
-        applicationService.logout(request, token);
+    public void logoutUser(@RequestHeader("token") String token, @RequestHeader("email") String email) {
+        userTokenChecker.checkUserTokenValid(email, token);
+        applicationService.logout(email, token);
     }
 }

@@ -71,9 +71,9 @@ public class UserApplicationService {
     }
 
     @Transactional
-    public void logout(LogoutRequest request, String token) {
+    public void logout(String email, String token) {
         UserEntity userEntityByEmail = userRepository
-            .findUserEntityByEmail(request.getEmail()).orElseThrow(ExceptionSupplier.userNotFound());
+            .findUserEntityByEmail(email).orElseThrow(ExceptionSupplier.userNotFound());
         userRepository.save(new UserEntity(userEntityByEmail.mapToDomain().goOffline()));
         userTokenRepository.deleteUserTokenEntityByContent(token);
     }

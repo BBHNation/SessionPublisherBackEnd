@@ -1,5 +1,6 @@
 package com.hancock.SessionPublisher.user;
 
+import com.hancock.SessionPublisher.intrastructure.utils.UserTokenChecker;
 import com.hancock.SessionPublisher.user.views.LoginRequest;
 import com.hancock.SessionPublisher.user.views.LogoutRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
@@ -17,10 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
+    private final UserTokenChecker userTokenChecker;
     private final UserApplicationService applicationService;
 
     public UserController(
+        UserTokenChecker userTokenChecker,
         UserApplicationService applicationService) {
+        this.userTokenChecker = userTokenChecker;
         this.applicationService = applicationService;
     }
 
@@ -39,6 +43,7 @@ public class UserController {
 
     @PostMapping(value = "/logout")
     public void logoutUser(@RequestBody @Validated LogoutRequest request, @RequestHeader("token") String token) {
+        userTokenChecker.checkUserTokenValid(request.getEmail(), token);
         applicationService.logout(request, token);
     }
 }

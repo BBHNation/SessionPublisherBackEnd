@@ -4,7 +4,8 @@ import java.util.Optional;
 import org.springframework.data.repository.Repository;
 
 public interface UserRepository extends Repository<UserEntity, String> {
-    public void save(UserEntity entity);
-    public Optional<UserEntity> findUserEntityByEmail(String email);
-    public Optional<UserEntity> findUserEntityById(String userId);
+    void save(UserEntity entity);
+    Optional<UserEntity> findUserEntityByEmail(String email);
+    Optional<UserEntity> findUserEntityById(String userId);
+    Optional<UserEntity> findUserEntityByName(String name);
 }

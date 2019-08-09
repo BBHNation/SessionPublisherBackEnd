@@ -9,12 +9,12 @@ import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenEntity;
 import com.hancock.SessionPublisher.intrastructure.userToken.UserTokenRepository;
 import com.hancock.SessionPublisher.intrastructure.utils.TokenGenerator;
 import com.hancock.SessionPublisher.user.views.LoginRequest;
-import com.hancock.SessionPublisher.user.views.LogoutRequest;
 import com.hancock.SessionPublisher.user.views.RegisterRequest;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,12 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserApplicationService {
     private final UserRepository userRepository;
     private final UserTokenRepository userTokenRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public UserApplicationService(
         UserRepository repository,
-        UserTokenRepository userTokenRepository) {
+        UserTokenRepository userTokenRepository,
+        PasswordEncoder passwordEncoder) {
         this.userRepository = repository;
         this.userTokenRepository = userTokenRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void registerUser(RegisterRequest request) {
@@ -49,7 +52,7 @@ public class UserApplicationService {
             UserEntity userEntity = userRepository.findUserEntityByEmail(request.getEmail())
                 .orElseThrow(ExceptionSupplier.userNotFound());
             UserDomain userDomain = userEntity.mapToDomain();
-            if (userDomain.getSecurityCode().equals(request.getSecurityCode())) {
+            if (passwordEncoder.matches(request.getSecurityCode(), userDomain.getSecurityCode())) {
                 return updateLoginStateAndGeneratorToken(userDomain);
             } else {
                 throw new ConflictException(ExceptionCode.SECURITY_CODE_WRONG);
